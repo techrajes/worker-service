@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  labels:
+    app: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: <aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/worker:latest
+          env:
+            - name: REDIS_HOST
+              value: <private-ip-of-redis>
+            - name: POSTGRES_HOST
+              value: <private-ip-of-postgres>
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: database
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          volumeMounts:
+            - name: efs-volume
+              mountPath: /efs-data
+      volumes:
+        - name: efs-volume
+          persistentVolumeClaim:
+            claimName: worker-efs-pvc

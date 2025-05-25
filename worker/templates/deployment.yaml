@@ -2,10 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: worker
-  labels:
-    app: worker
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: worker
@@ -15,32 +13,26 @@ spec:
         app: worker
     spec:
       containers:
-        - name: worker
-          image: <aws_account_id>.dkr.ecr.ap-south-1.amazonaws.com/worker:latest
-          env:
-            - name: REDIS_HOST
-              value: <private-ip-of-redis>
-            - name: POSTGRES_HOST
-              value: <private-ip-of-postgres>
-            - name: POSTGRES_DB
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: database
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: password
-          volumeMounts:
-            - name: efs-volume
-              mountPath: /efs-data
+      - name: worker
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+        env:
+        - name: REDIS_HOST
+          value: "{{ .Values.env.REDIS_HOST }}"
+        - name: POSTGRES_HOST
+          value: "{{ .Values.env.POSTGRES_HOST }}"
+        - name: DB_NAME
+          value: "{{ .Values.env.DB_NAME }}"
+        - name: DB_USER
+          value: "{{ .Values.env.DB_USER }}"
+        - name: DB_PASSWORD
+          value: "{{ .Values.env.DB_PASSWORD }}"
+        volumeMounts:
+        - name: worker-data
+          mountPath: /data
       volumes:
-        - name: efs-volume
-          persistentVolumeClaim:
-            claimName: worker-efs-pvc
+      - name: worker-data
+        persistentVolumeClaim:
+          claimName: worker-pvc

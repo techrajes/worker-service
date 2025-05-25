@@ -3,9 +3,9 @@ kind: Service
 metadata:
   name: worker
 spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
   selector:
     app: worker
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80

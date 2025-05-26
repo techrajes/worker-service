@@ -18,9 +18,9 @@ env:
 
 efs:
   fileSystemId: fs-0e1437fd22b2eef09  # Replace with your EFS File System ID
-  accessPointId: fs-0e1437fd22b2eef09  # Replace with the new Access Point ID for worker-service
+  accessPointId: fsap-0f89f615c522d836e  # Replace with the new Access Point ID for worker-service
   storageClassName: efs-sc
-  storageSize: 5Gi
+  storageSize: 1Gi
   mountPath: /worker/data  # Adjust as per your application's requirement
 
 resources: {}

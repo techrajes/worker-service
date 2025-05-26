@@ -17,8 +17,11 @@ env:
   DB_PASSWORD: mypassword
 
 efs:
-  server: fs-0e1437fd22b2eef09.efs.us-east-1.amazonaws.com
-  path: /worker-data
+  fileSystemId: fs-0e1437fd22b2eef09  # Replace with your EFS File System ID
+  accessPointId: fs-0e1437fd22b2eef09  # Replace with the new Access Point ID for worker-service
+  storageClassName: efs-sc
+  storageSize: 5Gi
+  mountPath: /worker/data  # Adjust as per your application's requirement
 
 resources: {}
 nodeSelector: {}

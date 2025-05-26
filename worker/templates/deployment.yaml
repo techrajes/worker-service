@@ -30,9 +30,9 @@ spec:
         - name: DB_PASSWORD
           value: "{{ .Values.env.DB_PASSWORD }}"
         volumeMounts:
-        - name: worker-data
-          mountPath: /data
+            - name: efs-volume
+              mountPath: {{ .Values.efs.mountPath }}
       volumes:
-      - name: worker-data
-        persistentVolumeClaim:
-          claimName: worker-pvc
+        - name: efs-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-efs-pvc
